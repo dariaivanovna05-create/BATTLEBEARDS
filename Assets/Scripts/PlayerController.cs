@@ -1,47 +1,59 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
- 
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerIndex playerIndex;
     public event Action<PlayerIndex, PlayerActions> OnActionChosen;
-    private bool reloading = false;
+
     private bool hasDecided = false;
     private SpriteRenderer spriteRenderer;
-    private static readonly Color colorReload = Color.red;
-    private static readonly Color colorDefend = Color.blue;
-    private static readonly Color colorAttack = Color.yellow;
-    private static readonly Color colorDefault = Color.white;
 
-//atacar
-    [SerializeField] private Animator animHacha1;
-    [SerializeField] private Animator animHacha2;
+    // Estado del jugador
+    private bool isArmed = false;
+    private bool isProtected = false;
+    private bool isSafe = false;
+    private bool isDead = false;
 
-// defenderse
-    [SerializeField] private Animator animPlayer1;
-    [SerializeField] private Animator animPlayer2;
+    // Guardar la última acción elegida
+    private PlayerActions lastAction;
 
-// recargar
-    [SerializeField] private Animator animRecarga1;
-    [SerializeField] private Animator animRecarga2;
+    [Header("None")]
+    [SerializeField] private Sprite IdleBlue;
+    [SerializeField] private Sprite IdleRed;
+    [SerializeField] private Sprite ArmedBlue;
+    [SerializeField] private Sprite ArmedRed;
 
-// respawn hacha
-    [SerializeField] private Animator animRespawn1;
-    [SerializeField] private Animator animRespawn2;
+    [Header("Dead")]
+    [SerializeField] private Sprite DeadIdleBlue;
+    [SerializeField] private Sprite DeadArmedBlue;
+    [SerializeField] private Sprite DeadIdleRed;
+    [SerializeField] private Sprite DeadArmedRed;
+
+    [Header("Defense")]
+    [SerializeField] private Sprite DefIdleBlue;
+    [SerializeField] private Sprite DefArmedBlue;
+    [SerializeField] private Sprite DefIdleRed;
+    [SerializeField] private Sprite DefArmedRed;
+
+    [Header("Safe")]
+    [SerializeField] private Sprite SafeIdleBlue;
+    [SerializeField] private Sprite SafeArmedBlue;
+    [SerializeField] private Sprite SafeIdleRed;
+    [SerializeField] private Sprite SafeArmedRed;
 
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        UpdateSprite();
     }
- 
+
     void Update()
     {
-       
-        if(hasDecided) return;
- 
-        if(playerIndex == PlayerIndex.Player1)
+        if (hasDecided || isDead) return;
+
+        if (playerIndex == PlayerIndex.Player1)
         {
             InputManagerPlayer1();
         }
@@ -54,43 +66,124 @@ public class PlayerController : MonoBehaviour
     public void RestartRound()
     {
         hasDecided = false;
-        spriteRenderer.color = colorDefault;
+        isProtected = false;
+        isSafe = false;
+
+        UpdateSprite();
     }
 
     private void ChooseAction(PlayerActions action)
     {
-        if(hasDecided) return;
- 
+        if (hasDecided || isDead) return;
+
+        lastAction = action;
+
         switch (action)
         {
             case PlayerActions.Reload:
-                spriteRenderer.color = colorReload;
-                reloading = true;
+                isArmed = true;
                 break;
+
             case PlayerActions.Defend:
-                spriteRenderer.color = colorDefend;
+                isProtected = true;
                 break;
+
             case PlayerActions.Attack:
-                if (!reloading) 
+                if (!isArmed)
                 {
                     return;
                 }
-                animHacha1.SetBool("Attack", true);
-                reloading = false;
+
+                isArmed = false;
                 break;
         }
-       
+
+        UpdateSprite();
+
         hasDecided = true;
         OnActionChosen?.Invoke(playerIndex, action);
     }
 
     public void Die()
     {
-        if (gameObject)
+        isDead = true;
+        UpdateSprite();
+    }
+
+    public void MarkAsSafe()
+    {
+        isSafe = true;
+        UpdateSprite();
+    }
+
+    public void ClearSafe()
+    {
+        isSafe = false;
+        UpdateSprite();
+    }
+
+    public PlayerActions GetLastAction()
+    {
+        return lastAction;
+    }
+
+    public bool IsArmed()
+    {
+        return isArmed;
+    }
+
+    public bool IsProtected()
+    {
+        return isProtected;
+    }
+
+    public bool IsDead()
+    {
+        return isDead;
+    }
+
+    private void UpdateSprite()
+    {
+        if (playerIndex == PlayerIndex.Player1)
         {
-            gameObject.SetActive(false);
+            if (isDead)
+            {
+                spriteRenderer.sprite = isArmed ? DeadArmedRed : DeadIdleRed;
+            }
+            else if (isSafe)
+            {
+                spriteRenderer.sprite = isArmed ? SafeArmedRed : SafeIdleRed;
+            }
+            else if (isProtected)
+            {
+                spriteRenderer.sprite = isArmed ? DefArmedRed : DefIdleRed;
+            }
+            else
+            {
+                spriteRenderer.sprite = isArmed ? ArmedRed : IdleRed;
+            }
+        }
+        else
+        {
+            if (isDead)
+            {
+                spriteRenderer.sprite = isArmed ? DeadArmedBlue : DeadIdleBlue;
+            }
+            else if (isSafe)
+            {
+                spriteRenderer.sprite = isArmed ? SafeArmedBlue : SafeIdleBlue;
+            }
+            else if (isProtected)
+            {
+                spriteRenderer.sprite = isArmed ? DefArmedBlue : DefIdleBlue;
+            }
+            else
+            {
+                spriteRenderer.sprite = isArmed ? ArmedBlue : IdleBlue;
+            }
         }
     }
+
     private void InputManagerPlayer1()
     {
         if (Keyboard.current.aKey.wasPressedThisFrame)
@@ -101,12 +194,12 @@ public class PlayerController : MonoBehaviour
         {
             ChooseAction(PlayerActions.Defend);
         }
-        else if(Keyboard.current.dKey.wasPressedThisFrame)
+        else if (Keyboard.current.dKey.wasPressedThisFrame)
         {
             ChooseAction(PlayerActions.Attack);
         }
     }
- 
+
     private void InputManagerPlayer2()
     {
         if (Keyboard.current.lKey.wasPressedThisFrame)
@@ -117,7 +210,7 @@ public class PlayerController : MonoBehaviour
         {
             ChooseAction(PlayerActions.Defend);
         }
-        else if(Keyboard.current.jKey.wasPressedThisFrame)
+        else if (Keyboard.current.jKey.wasPressedThisFrame)
         {
             ChooseAction(PlayerActions.Attack);
         }
