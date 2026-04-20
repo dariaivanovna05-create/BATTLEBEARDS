@@ -10,13 +10,11 @@ public class PlayerController : MonoBehaviour
     private bool hasDecided = false;
     private SpriteRenderer spriteRenderer;
 
-    // Estado del jugador
     private bool isArmed = false;
     private bool isProtected = false;
     private bool isSafe = false;
     private bool isDead = false;
 
-    // Guardar la última acción elegida
     private PlayerActions lastAction;
 
     [Header("None")]
