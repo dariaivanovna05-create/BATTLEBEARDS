@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening; // <── añadir
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,8 +15,15 @@ public class PlayerController : MonoBehaviour
     private bool isProtected = false;
     private bool isSafe = false;
     private bool isDead = false;
+    private Vector3 originalScale;
 
     private PlayerActions lastAction;
+
+    private Tween bounceTween;
+
+    [Header("Tween Bounce")]
+    [SerializeField] private float bounceStrength = 0.15f;
+    [SerializeField] private float bounceDuration = 0.3f;
 
     [Header("None")]
     [SerializeField] private Sprite IdleBlue;
@@ -44,8 +52,10 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        originalScale = transform.localScale; // <── guardar aquí una sola vez
         UpdateSprite();
     }
+
 
     void Update()
     {
@@ -96,7 +106,7 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        UpdateSprite();
+        //UpdateSprite();
 
         hasDecided = true;
         OnActionChosen?.Invoke(playerIndex, action);
@@ -212,5 +222,15 @@ public class PlayerController : MonoBehaviour
         {
             ChooseAction(PlayerActions.Attack);
         }
+    }
+
+    public void LockInput()
+    {
+        hasDecided = true; // <── reutilizamos el flag que ya bloquea el Update
+    }
+
+    public void RevealAction() // el GameController lo llama tras el countdown
+    {
+        UpdateSprite();
     }
 }

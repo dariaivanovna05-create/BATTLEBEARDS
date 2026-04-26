@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,28 +8,37 @@ public class GameController : MonoBehaviour
     {
         public static PlayerIndex winner;
     }
-    public static GameController instance {get; private set;}
+    public static GameController instance { get; private set; }
 
+    private PlayerActions actionsPlayer1 = PlayerActions.None;
+    private PlayerActions actionsPlayer2 = PlayerActions.None;
+
+    [Header("Data")]
     [SerializeField] private PlayerController player1;
     [SerializeField] private PlayerController player2;
     [SerializeField] private float roundTime = 5f;
+    [SerializeField] private float realizeTime = 1f;
+
+    [Header("Countdown")]
+    [SerializeField] private Animator countdownAnimator;
+    [SerializeField] private string countdownStateName = "contadorAnim";
+
+    /*
+    [Header("Result Sprite")]
+    [SerializeField] private SpriteRenderer resultRenderer;
+    [SerializeField] private Sprite spriteEmpate;
+    [SerializeField] private Sprite spriteVictoriaP1;
+    [SerializeField] private Sprite spriteVictoriaP2;
+    */
+    [Header("Victory Scene")]
     [SerializeField] private string victorySceneName = "VictoryScene";
-    private PlayerActions actionsPlayer1 = PlayerActions.None;
-    private PlayerActions actionsPlayer2 = PlayerActions.None;
- 
-    private float currentTime;
+
     private enum RoundResult { Draw, Player1Win, Player2Win }
 
     void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (instance == null) instance = this;
+        else { Destroy(gameObject); return; }
 
         player1.OnActionChosen += RegisterActions;
         player2.OnActionChosen += RegisterActions;
@@ -42,78 +52,81 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        StartRound();
+        //resultRenderer.enabled = false;
+        StartCoroutine(RoundLoop());
     }
-    void Update()
+
+    private IEnumerator RoundLoop()
     {
-        currentTime -= Time.deltaTime;
-        if(currentTime <= 0f)
+        while (true)
         {
-            ResolveRound();
+            actionsPlayer1 = PlayerActions.None;
+            actionsPlayer2 = PlayerActions.None;
+            player1.RestartRound();
+            player2.RestartRound();
+
+            yield return new WaitForSeconds(roundTime);
+
+            player1.LockInput(); // <── bloquear antes de revelar
+            player2.LockInput();
+
+            player1.RevealAction();
+            player2.RevealAction();
+
+            yield return StartCoroutine(ResolveRound());
+
+            if (player1.IsDead() || player2.IsDead()) yield break;
+        }
+    }
+
+    private IEnumerator ResolveRound()
+    {
+        RoundResult result = EvaluateResult(actionsPlayer1, actionsPlayer2);
+
+        //resultRenderer.enabled = true;
+
+        switch (result)
+        {
+            case RoundResult.Draw:
+                //resultRenderer.sprite = spriteEmpate;
+                break;
+
+            case RoundResult.Player1Win:
+                VictoryData.winner = PlayerIndex.Player1;
+                //resultRenderer.sprite = spriteVictoriaP1;
+                player2.Die();
+                break;
+
+            case RoundResult.Player2Win:
+                VictoryData.winner = PlayerIndex.Player2;
+                //resultRenderer.sprite = spriteVictoriaP2;
+                player1.Die();
+                break;
+        }
+
+        yield return new WaitForSeconds(realizeTime);
+
+        if (result == RoundResult.Player1Win || result == RoundResult.Player2Win)
+        {
+            SceneManager.LoadScene(victorySceneName);
         }
     }
 
     private void RegisterActions(PlayerIndex player, PlayerActions playerActions)
     {
-        if(player == PlayerIndex.Player1)
-        {
-            actionsPlayer1 = playerActions;
-        }
-        else
-        {
-            actionsPlayer2 = playerActions;
-        }
-    }
-
-    private void StartRound()
-    {
-        currentTime = roundTime;
-        actionsPlayer1 = PlayerActions.None;
-        actionsPlayer2 = PlayerActions.None;
- 
-        player1.RestartRound();
-        player2.RestartRound();
-    }
-
-    private void ResolveRound()
-    {
-        switch (EvaluateResult(actionsPlayer1, actionsPlayer2))
-        {
-            case RoundResult.Draw:
-               StartRound();
-                break;
-    
-            case RoundResult.Player1Win:
-                VictoryData.winner = PlayerIndex.Player1;
-                player2.Die();
-                SceneManager.LoadScene(victorySceneName);
-                break;
-
-            case RoundResult.Player2Win:
-                VictoryData.winner = PlayerIndex.Player2;  
-                player1.Die();
-                SceneManager.LoadScene(victorySceneName);
-                break;
-        }
+        if (player == PlayerIndex.Player1) actionsPlayer1 = playerActions;
+        else actionsPlayer2 = playerActions;
     }
 
     private static RoundResult EvaluateResult(PlayerActions action1, PlayerActions action2)
     {
-        if(action1 == PlayerActions.Attack)
-        {
-            if(action2 == PlayerActions.Reload || action2 == PlayerActions.None)
-            {
+        if (action1 == PlayerActions.Attack)
+            if (action2 == PlayerActions.Reload || action2 == PlayerActions.None)
                 return RoundResult.Player1Win;
-            }
-        }
- 
-        if(action2 == PlayerActions.Attack)
-        {
-            if(action1 == PlayerActions.Reload || action1 == PlayerActions.None)
-            {
+
+        if (action2 == PlayerActions.Attack)
+            if (action1 == PlayerActions.Reload || action1 == PlayerActions.None)
                 return RoundResult.Player2Win;
-            }
-        }
 
         return RoundResult.Draw;
     }
