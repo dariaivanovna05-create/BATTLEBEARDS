@@ -13,6 +13,12 @@ public class GameController : MonoBehaviour
     private PlayerActions actionsPlayer1 = PlayerActions.None;
     private PlayerActions actionsPlayer2 = PlayerActions.None;
 
+    [Header("Music")]
+    [SerializeField] AudioData MusicData;
+
+    [Header("SFX")]
+    [SerializeField] AudioData hornData;
+
     [Header("Data")]
     [SerializeField] private PlayerController player1;
     [SerializeField] private PlayerController player2;
@@ -54,6 +60,9 @@ public class GameController : MonoBehaviour
     {
         //resultRenderer.enabled = false;
         StartCoroutine(RoundLoop());
+        
+        AudioManager.Instance.StopMusic();
+        AudioManager.Instance.PlayMusic(MusicData);
     }
 
     private IEnumerator RoundLoop()
@@ -105,6 +114,7 @@ public class GameController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(realizeTime);
+        AudioManager.Instance.PlaySFX(hornData, transform.position);
 
         if (result == RoundResult.Player1Win || result == RoundResult.Player2Win)
         {

@@ -437,6 +437,10 @@ MonoBehaviour:
   playerIndex: 0
   bounceStrength: 0.15
   bounceDuration: 0.3
+  red_death: {fileID: 11400000, guid: 62fc8811724f365468367f6efa5eb196, type: 2}
+  blue_death: {fileID: 11400000, guid: 9093162351416b44eb27d18fc7e142f6, type: 2}
+  red_neutral: {fileID: 11400000, guid: 89b55751ff038b046a1a924e25d6f487, type: 2}
+  blue_neutral: {fileID: 11400000, guid: 8a82b1936dcb33646b284bf501ef60ee, type: 2}
   IdleBlue: {fileID: -3925128882136209622, guid: 4fed680a7390c8a488df60afaf351e11, type: 3}
   IdleRed: {fileID: 4699793631526783422, guid: a402c1a0b766e654baf6551c0c0a6a94, type: 3}
   ArmedBlue: {fileID: 5720783981802734121, guid: 79dcccf96ca3de34c86bfc520272f1c4, type: 3}
@@ -850,7 +854,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1244,6 +1248,10 @@ MonoBehaviour:
   playerIndex: 1
   bounceStrength: 0.15
   bounceDuration: 0.3
+  red_death: {fileID: 11400000, guid: 62fc8811724f365468367f6efa5eb196, type: 2}
+  blue_death: {fileID: 11400000, guid: 9093162351416b44eb27d18fc7e142f6, type: 2}
+  red_neutral: {fileID: 11400000, guid: 89b55751ff038b046a1a924e25d6f487, type: 2}
+  blue_neutral: {fileID: 11400000, guid: 8a82b1936dcb33646b284bf501ef60ee, type: 2}
   IdleBlue: {fileID: -3925128882136209622, guid: 4fed680a7390c8a488df60afaf351e11, type: 3}
   IdleRed: {fileID: 4699793631526783422, guid: a402c1a0b766e654baf6551c0c0a6a94, type: 3}
   ArmedBlue: {fileID: 5720783981802734121, guid: 79dcccf96ca3de34c86bfc520272f1c4, type: 3}

@@ -25,6 +25,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float bounceStrength = 0.15f;
     [SerializeField] private float bounceDuration = 0.3f;
 
+    [Header("Sound")]
+    [SerializeField] AudioData red_death;
+    [SerializeField] AudioData blue_death;
+    [SerializeField] AudioData red_neutral;
+    [SerializeField] AudioData blue_neutral;
+
     [Header("None")]
     [SerializeField] private Sprite IdleBlue;
     [SerializeField] private Sprite IdleRed;
@@ -196,14 +202,17 @@ public class PlayerController : MonoBehaviour
     {
         if (Keyboard.current.aKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySFX(red_neutral, transform.position);
             ChooseAction(PlayerActions.Reload);
         }
         else if (Keyboard.current.sKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySFX(red_neutral, transform.position);
             ChooseAction(PlayerActions.Defend);
         }
         else if (Keyboard.current.dKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySFX(red_neutral, transform.position);
             ChooseAction(PlayerActions.Attack);
         }
     }
@@ -212,14 +221,17 @@ public class PlayerController : MonoBehaviour
     {
         if (Keyboard.current.lKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySFX(blue_neutral, transform.position);
             ChooseAction(PlayerActions.Reload);
         }
         else if (Keyboard.current.kKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySFX(blue_neutral, transform.position);
             ChooseAction(PlayerActions.Defend);
         }
         else if (Keyboard.current.jKey.wasPressedThisFrame)
         {
+            AudioManager.Instance.PlaySFX(blue_neutral, transform.position);
             ChooseAction(PlayerActions.Attack);
         }
     }
