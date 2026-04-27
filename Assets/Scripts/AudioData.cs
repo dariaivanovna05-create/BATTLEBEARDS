@@ -3,7 +3,7 @@ using UnityEngine;
 public interface IAudioSystem
 {
     void PlaySFX(AudioData data, Vector3 position = default);
-    void PlayMusic(AudioData data);
+    void PlayMusic(AudioData data, int level);
     void StopMusic();
 }
 

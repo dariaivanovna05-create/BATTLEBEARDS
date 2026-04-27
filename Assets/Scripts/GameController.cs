@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour
         StartCoroutine(RoundLoop());
         
         AudioManager.Instance.StopMusic();
-        AudioManager.Instance.PlayMusic(MusicData);
+        AudioManager.Instance.PlayMusic(MusicData, 1);
     }
 
     private IEnumerator RoundLoop()

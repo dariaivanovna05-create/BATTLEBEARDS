@@ -60,7 +60,7 @@ public class AudioManager : MonoBehaviour, IAudioSystem
         aSource.Play();
     }
 
-    public void PlayMusic(AudioData data)
+    public void PlayMusic(AudioData data, int level)
     {
         if(data == null) 
         {
@@ -68,7 +68,7 @@ public class AudioManager : MonoBehaviour, IAudioSystem
             return;
         }
 
-        AudioClip mClip = data.GetRandomAudioClip();
+        AudioClip mClip = data.clips[level];
         if(musicSource.clip == mClip && musicSource.isPlaying) return;
 
         musicSource.clip = mClip;

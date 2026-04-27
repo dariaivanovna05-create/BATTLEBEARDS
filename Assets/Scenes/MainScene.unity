@@ -119,52 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &34696451
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 34696453}
-  - component: {fileID: 34696452}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &34696452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 34696451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60032f8043b825648910f163a0ff58d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  MusicData: {fileID: 11400000, guid: 3861f83f1a5f2654a8392c8afcff7086, type: 2}
-  SFXData: {fileID: 11400000, guid: 45ec7fd2f595c454c868075758811e62, type: 2}
---- !u!4 &34696453
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 34696451}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1068993776}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &42677838
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,12 +148,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3e6416bfc36b4245b535131b4bfb965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameController
+  MusicData: {fileID: 11400000, guid: 3861f83f1a5f2654a8392c8afcff7086, type: 2}
+  hornData: {fileID: 11400000, guid: 45ec7fd2f595c454c868075758811e62, type: 2}
   player1: {fileID: 97652104}
   player2: {fileID: 993417723}
   roundTime: 3
   realizeTime: 1
   countdownAnimator: {fileID: 1093512256}
   countdownStateName: contadorAnim
+  resultRenderer: {fileID: 0}
+  spriteEmpate: {fileID: 0}
+  spriteVictoriaP1: {fileID: 0}
+  spriteVictoriaP2: {fileID: 0}
   victorySceneName: VictoryScene
 --- !u!4 &42677840
 Transform:
@@ -1297,7 +1257,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 34696453}
   - {fileID: 1522688910}
   - {fileID: 1239945301}
   m_Father: {fileID: 0}
