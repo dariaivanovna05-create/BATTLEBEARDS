@@ -29,13 +29,12 @@ public class GameController : MonoBehaviour
     [SerializeField] private Animator countdownAnimator;
     [SerializeField] private string countdownStateName = "contadorAnim";
 
-    /*
-    [Header("Result Sprite")]
+    [Header("Result Sprite")] // <-------------------------------- AQUI TIENES QUE METER PRIMERO UN SPRITE RENDERER PARA EL "LUGAR" DEL BOCADILLO Y, DESPUÉS, CADA BOCADILLO POR SEPARADO
     [SerializeField] private SpriteRenderer resultRenderer;
     [SerializeField] private Sprite spriteEmpate;
     [SerializeField] private Sprite spriteVictoriaP1;
     [SerializeField] private Sprite spriteVictoriaP2;
-    */
+
     [Header("Victory Scene")]
     [SerializeField] private string victorySceneName = "VictoryScene";
 
@@ -92,23 +91,23 @@ public class GameController : MonoBehaviour
     {
         RoundResult result = EvaluateResult(actionsPlayer1, actionsPlayer2);
 
-        //resultRenderer.enabled = true;
+        resultRenderer.enabled = true;
 
         switch (result)
         {
             case RoundResult.Draw:
-                //resultRenderer.sprite = spriteEmpate;
+                //resultRenderer.sprite = spriteEmpate; CAMBIAR ESTOOOOOOO
                 break;
 
             case RoundResult.Player1Win:
                 VictoryData.winner = PlayerIndex.Player1;
-                //resultRenderer.sprite = spriteVictoriaP1;
+                //resultRenderer.sprite = spriteVictoriaP1; CAMBIAR ESTOOOOOOOOOO
                 player2.Die();
                 break;
 
             case RoundResult.Player2Win:
                 VictoryData.winner = PlayerIndex.Player2;
-                //resultRenderer.sprite = spriteVictoriaP2;
+                //resultRenderer.sprite = spriteVictoriaP2; CAMBIAR ESTOOOOOOOOO
                 player1.Die();
                 break;
         }
