@@ -15,15 +15,20 @@ public class AudioManager : MonoBehaviour, IAudioSystem
     private List<AudioSource> sfxPool = new List<AudioSource>();
     void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
             return;
         }
+
+        // Crear el AudioSource de música por código
+        musicSource = gameObject.AddComponent<AudioSource>();
+        musicSource.loop = true;
 
         for (int i = 0; i < initialPoolSize; i++)
         {
@@ -36,21 +41,22 @@ public class AudioManager : MonoBehaviour, IAudioSystem
         GameObject gObject = new GameObject("SFXSource");
         gObject.transform.SetParent(transform);
         AudioSource aSource = gObject.AddComponent<AudioSource>();
+        sfxPool.Add(aSource); // ← esto también faltaba
         return aSource;
     }
 
     public AudioSource GetAviableSFXSource()
     {
-        foreach(var source in sfxPool)
+        foreach (var source in sfxPool)
         {
-            if(!source.isPlaying) return source;
+            if (!source.isPlaying) return source;
         }
         return CreateNewSFXSource();
     }
 
     public void PlaySFX(AudioData data, Vector3 position = default)
     {
-        if(data == null) return;
+        if (data == null) return;
         AudioSource aSource = GetAviableSFXSource();
         aSource.transform.position = position;
         aSource.clip = data.GetRandomAudioClip();
@@ -62,14 +68,14 @@ public class AudioManager : MonoBehaviour, IAudioSystem
 
     public void PlayMusic(AudioData data, int level)
     {
-        if(data == null) 
+        if (data == null)
         {
             StopMusic();
             return;
         }
 
         AudioClip mClip = data.clips[level];
-        if(musicSource.clip == mClip && musicSource.isPlaying) return;
+        if (musicSource.clip == mClip && musicSource.isPlaying) return;
 
         musicSource.clip = mClip;
         musicSource.volume = data.volume;

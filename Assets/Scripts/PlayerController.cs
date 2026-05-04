@@ -55,6 +55,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Sprite SafeIdleRed;
     [SerializeField] private Sprite SafeArmedRed;
 
+    [Header("Action Indicator")]
+    [SerializeField] private SpriteRenderer actionIndicator; // ← arrastra aquí el hijo
+    [SerializeField] private Sprite spriteReload;
+    [SerializeField] private Sprite spriteDefend;
+    [SerializeField] private Sprite spriteAttack;
+
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -82,7 +88,7 @@ public class PlayerController : MonoBehaviour
         hasDecided = false;
         isProtected = false;
         isSafe = false;
-
+        actionIndicator.enabled = false; // ← ocultar al reiniciar
         UpdateSprite();
     }
 
@@ -96,23 +102,20 @@ public class PlayerController : MonoBehaviour
         {
             case PlayerActions.Reload:
                 isArmed = true;
+                actionIndicator.sprite = spriteReload;
                 break;
 
             case PlayerActions.Defend:
                 isProtected = true;
+                actionIndicator.sprite = spriteDefend;
                 break;
 
             case PlayerActions.Attack:
-                if (!isArmed)
-                {
-                    return;
-                }
-
+                if (!isArmed) return;
                 isArmed = false;
+                actionIndicator.sprite = spriteAttack;
                 break;
         }
-
-        //UpdateSprite();
 
         hasDecided = true;
         OnActionChosen?.Invoke(playerIndex, action);
@@ -238,11 +241,12 @@ public class PlayerController : MonoBehaviour
 
     public void LockInput()
     {
-        hasDecided = true; // <── reutilizamos el flag que ya bloquea el Update
+        hasDecided = true;
     }
 
-    public void RevealAction() // el GameController lo llama tras el countdown
+    public void RevealAction()
     {
         UpdateSprite();
+        actionIndicator.enabled = true; // ← mostrar al elegir
     }
 }

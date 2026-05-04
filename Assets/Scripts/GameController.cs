@@ -91,7 +91,7 @@ public class GameController : MonoBehaviour
     {
         RoundResult result = EvaluateResult(actionsPlayer1, actionsPlayer2);
 
-        resultRenderer.enabled = true;
+        //resultRenderer.enabled = true;
 
         switch (result)
         {
