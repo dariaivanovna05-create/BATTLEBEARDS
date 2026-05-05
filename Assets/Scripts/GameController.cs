@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,7 @@ public class GameController : MonoBehaviour
     public static class VictoryData
     {
         public static PlayerIndex winner;
+        public static bool isTie = false;
     }
     public static GameController instance { get; private set; }
 
@@ -38,7 +40,7 @@ public class GameController : MonoBehaviour
     [Header("Victory Scene")]
     [SerializeField] private string victorySceneName = "VictoryScene";
 
-    private enum RoundResult { Draw, Player1Win, Player2Win }
+    private enum RoundResult { Draw, Player1Win, Player2Win, Tie }
 
     void Awake()
     {
@@ -59,7 +61,7 @@ public class GameController : MonoBehaviour
     {
         //resultRenderer.enabled = false;
         StartCoroutine(RoundLoop());
-        
+
         AudioManager.Instance.StopMusic();
         AudioManager.Instance.PlayMusic(MusicData, 1);
     }
@@ -110,12 +112,18 @@ public class GameController : MonoBehaviour
                 //resultRenderer.sprite = spriteVictoriaP2; CAMBIAR ESTOOOOOOOOO
                 player1.Die();
                 break;
+
+            case RoundResult.Tie:
+                VictoryData.isTie = true;
+                player1.Die();
+                player2.Die();
+                break;
         }
 
         yield return new WaitForSeconds(realizeTime);
         AudioManager.Instance.PlaySFX(hornData, transform.position);
 
-        if (result == RoundResult.Player1Win || result == RoundResult.Player2Win)
+        if (result == RoundResult.Player1Win || result == RoundResult.Player2Win || result == RoundResult.Tie)
         {
             SceneManager.LoadScene(victorySceneName);
         }
@@ -129,6 +137,8 @@ public class GameController : MonoBehaviour
 
     private static RoundResult EvaluateResult(PlayerActions action1, PlayerActions action2)
     {
+        if (action1 == PlayerActions.Attack && action2 == PlayerActions.Attack)
+            return RoundResult.Tie;
         if (action1 == PlayerActions.Attack)
             if (action2 == PlayerActions.Reload || action2 == PlayerActions.None)
                 return RoundResult.Player1Win;

@@ -10,14 +10,18 @@ public class VictoryController : MonoBehaviour
     [SerializeField] private Sprite player1Sprite;
     [SerializeField] private Sprite player2Sprite;
 
-    [SerializeField] private Sprite drawSprite;
+    [SerializeField] private Sprite tieSprite;
 
     [SerializeField] private Button restartButton;
     [SerializeField] private string mainSceneName = "MainScene";
  
     void Start()
     {
-        if(GameController.VictoryData.winner == PlayerIndex.Player1)
+        if (GameController.VictoryData.isTie)
+        {
+            victoryRenderer.sprite = tieSprite;
+        }
+        else if(GameController.VictoryData.winner == PlayerIndex.Player1)
         {
             victoryRenderer.sprite = player1Sprite;
         }
@@ -25,16 +29,13 @@ public class VictoryController : MonoBehaviour
         {
             victoryRenderer.sprite = player2Sprite;
         }
-        else
-        {
-            victoryRenderer.sprite = drawSprite;
-        }
  
         restartButton.onClick.AddListener(RestartGame);
     }
  
     private void RestartGame()
     {
+        GameController.VictoryData.isTie = false;
         SceneManager.LoadScene(mainSceneName);
     }
 }

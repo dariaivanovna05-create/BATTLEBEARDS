@@ -88,7 +88,8 @@ public class PlayerController : MonoBehaviour
         hasDecided = false;
         isProtected = false;
         isSafe = false;
-        actionIndicator.enabled = false; // ← ocultar al reiniciar
+        lastAction = PlayerActions.None;
+        actionIndicator.enabled = false;
         UpdateSprite();
     }
 
@@ -114,6 +115,9 @@ public class PlayerController : MonoBehaviour
                 if (!isArmed) return;
                 isArmed = false;
                 actionIndicator.sprite = spriteAttack;
+                break;
+            case PlayerActions.None:
+                isProtected = false;
                 break;
         }
 
@@ -246,7 +250,10 @@ public class PlayerController : MonoBehaviour
 
     public void RevealAction()
     {
+        if (lastAction == PlayerActions.None)
+            actionIndicator.enabled = false;
+        else
+            actionIndicator.enabled = true;
         UpdateSprite();
-        actionIndicator.enabled = true; // ← mostrar al elegir
     }
 }
